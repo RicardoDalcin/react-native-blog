@@ -1,24 +1,51 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native'
-import BlogContext from '../context/BlogContext'
+import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler';
+import { Context as BlogContext } from '../context/BlogContext'
+import { Feather } from '@expo/vector-icons'
 
-const IndexScreen = () => {
+const IndexScreen = ({ navigation }) => {
 
-  const { data, addBlogPost } = useContext(BlogContext)
+  const { state, addBlogPost, deleteBlogPost } = useContext(BlogContext)
 
   return (
     <View>
-      <Button title="Add post" onPress={() => addBlogPost({ title: `blog post #${data.length + 1}` })} />
+      <Button title="Add post" onPress={() => addBlogPost({ title: `blog post #${state.length + 1}` })} />
       <FlatList
-        data={data}
-        keyExtractor={(item) => item.title}
-        renderItem={({ item }) => (<Text>{item.title}</Text>)}
+        data={state}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity onPress={() => navigation.navigate('Show', { id: item.id })}>
+              <View style={styles.row}>
+                <Text style={styles.title}>{item.title}</Text>
+                <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
+                  <Feather name="trash" style={styles.icon} />
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          )
+        }}
       />
     </View>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderColor: 'gray'
+  },
+  title: {
+    fontSize: 18
+  },
+  icon: {
+    fontSize: 24
+  }
+})
 
 export default IndexScreen
