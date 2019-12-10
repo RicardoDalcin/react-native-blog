@@ -1,13 +1,14 @@
-import React, { useContext, useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { View, Text, StyleSheet, TextInput, Button } from 'react-native'
 import { Context as BlogContext } from '../context/BlogContext'
 
-const CreateScreen = ({ navigation }) => {
+const EditScreen = ({ navigation }) => {
 
-  const { addBlogPost } = useContext(BlogContext)
+  const { state, editBlogPost } = useContext(BlogContext)
+  const blogPostEdit = state.find(p => p.id === navigation.getParam('id'))
 
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+  const [title, setTitle] = useState(blogPostEdit.title)
+  const [content, setContent] = useState(blogPostEdit.content)
 
   return (
     <View>
@@ -15,7 +16,7 @@ const CreateScreen = ({ navigation }) => {
       <TextInput style={styles.input} value={title} onChangeText={setTitle} />
       <Text style={styles.label}>Content:</Text>
       <TextInput style={styles.input} value={content} onChangeText={setContent} />
-      <Button title="Add blog post" onPress={() => addBlogPost(title, content, () => { navigation.navigate('Index') })} />
+      <Button title="Save" onPress={() => editBlogPost(title, content, blogPostEdit.id, () => { navigation.navigate('Index') })} />
     </View>
   )
 }
@@ -35,4 +36,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default CreateScreen
+export default EditScreen
